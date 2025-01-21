@@ -8,17 +8,6 @@ interface LoginPageProps {
   title?: string;
 }
 
-interface User {
-  fid: number;
-  username: string;
-  displayName: string;
-  pfpUrl: string;
-  location: {
-    placeId: string;
-    description: string;
-  };
-}
-
 export default function LoginPage({
   title = "Frames v2 Demo",
 }: LoginPageProps) {
