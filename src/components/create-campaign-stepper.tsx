@@ -67,6 +67,7 @@ export default function CreateCampaign() {
   };
 
   const handleCreateCampaign = () => {
+    // add logic to create campaign
     console.log("Create Campaign with details:", {
       campaignMode,
       campaignDetails,

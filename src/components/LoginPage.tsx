@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "~/components/ui/button";
-import sdk, { SignIn as SignInCore } from "@farcaster/frame-sdk";
+import sdk, { SignIn as SignInCore, type Context } from "@farcaster/frame-sdk";
 import CreateCampaign from "./create-campaign-stepper";
 
 interface LoginPageProps {
@@ -19,16 +19,6 @@ interface User {
   };
 }
 
-interface Client {
-  clientFid: number;
-  added: boolean;
-}
-
-interface Context {
-  user: User;
-  client: Client;
-}
-
 export default function LoginPage({
   title = "Frames v2 Demo",
 }: LoginPageProps) {
@@ -40,7 +30,8 @@ export default function LoginPage({
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [added, setAdded] = useState(false);
   const [lastEvent, setLastEvent] = useState("");
-  const [context, setContext] = useState<Context | null>(null);
+  const [context, setContext] = useState<Context.FrameContext>();
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const getNonce = useCallback(async () => {
@@ -73,26 +64,6 @@ export default function LoginPage({
         return;
       }
 
-      // Simulate a login process
-      const userContext: Context = {
-        user: {
-          fid: 884823,
-          username: "sarvagna",
-          displayName: "Sarvagna Kadiya",
-          pfpUrl:
-            "https://imagedelivery.net/BXluQx4ige9GuW0Ia56BHw/f803614e-db63-4485-de12-5bf285bb7700/rectcrop3",
-          location: {
-            placeId: "ChIJSdRbuoqEXjkRFmVPYRHdzk8",
-            description: "Ahmedabad, Gujarat, India",
-          },
-        },
-        client: {
-          clientFid: 9152,
-          added: false,
-        },
-      };
-
-      setContext(userContext);
       setIsLoggedIn(true);
     } catch (e) {
       console.error("Sign in error:", e);
@@ -119,6 +90,7 @@ export default function LoginPage({
   useEffect(() => {
     const load = async () => {
       const context = await sdk.context;
+      setContext(context);
       setAdded(context.client.added);
 
       console.log(added);
@@ -212,7 +184,7 @@ export default function LoginPage({
             className="profile-pic"
           />
           <p>Username: {context?.user.username}</p>
-          <p>Location: {context?.user.location.description}</p>
+          <p>Location: {context?.user.location?.description}</p>
         </div>
       )}
     </div>
